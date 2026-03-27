@@ -64,7 +64,22 @@ def create_app() -> FastAPI:
     app.include_router(chatbot.router, prefix="/chatbot", tags=["chatbot"])
     app.include_router(notifications.router, prefix="/notifications", tags=["notifications"])
 
+    @app.get("/check-keys", tags=["system"])
+async def check_keys():
+    import os
+
+    openai_key = os.getenv("OPENAI_API_KEY")
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    jwt_secret = os.getenv("JWT_SECRET")
+
+    return {
+        "OPENAI_KEY": bool(openai_key),
+        "GEMINI_KEY": bool(gemini_key),
+        "JWT_SECRET": bool(jwt_secret)
+    }
+
     return app
 
 # Create app instance
 app = create_app()
+
